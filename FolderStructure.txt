@@ -1,0 +1,106 @@
+# Overview
+
+NagrikSetu/
+├── backend/               # Node.js + Express + MongoDB
+├── frontend/              # React + Vite + Tailwind
+├── .gitignore
+└── README.md
+
+# Backend
+
+backend/
+├── src/
+│   ├── config/                # Configurations
+│   │   ├── db.js              # MongoDB connection
+│   │   └── gemini.js          # Gemini Flash-Lite initialization
+│   │
+│   ├── controllers/           # Request handlers
+│   │   ├── auth.controller.js
+│   │   ├── complaint.controller.js
+│   │   ├── evidence.controller.js
+│   │   ├── department.controller.js
+│   │   └── admin.controller.js
+│   │
+│   ├── middlewares/           # Custom Express middlewares
+│   │   ├── auth.middleware.js # JWT & HTTP-only cookie verification
+│   │   ├── role.middleware.js # RBAC (Citizen, Official, Admin)
+│   │   ├── upload.middleware.js # Multer configuration for local storage
+│   │   └── rateLimiter.js     # Basic API rate limiting
+│   │
+│   ├── models/                # Mongoose Schemas (Section 43 & 44)
+│   │   ├── User.model.js
+│   │   ├── Department.model.js
+│   │   ├── Evidence.model.js
+│   │   ├── Complaint.model.js
+│   │   └── StatusHistory.model.js
+│   │
+│   ├── routes/                # API Endpoints mapped to controllers
+│   │   ├── auth.routes.js
+│   │   ├── complaint.routes.js
+│   │   ├── evidence.routes.js
+│   │   ├── department.routes.js
+│   │   └── admin.routes.js
+│   │
+│   ├── services/              # External APIs and complex business logic
+│   │   ├── gemini.service.js  # AI prompts, validation, structured JSON parsing
+│   │   ├── geocode.service.js # Reverse geocoding (Nominatim)
+│   │   └── complaint.service.js # Logic for finding duplicates / merging via $near
+│   │
+│   └── utils/                 # Helper functions
+│       ├── geoUtils.js        # Distance calculation helpers
+│       └── asyncWrapper.js    # Try-catch wrapper for async controllers
+│
+├── uploads/                   # Local folder for Multer to store images
+├── .env                       # Environment variables (JWT_SECRET, GEMINI_API_KEY)
+├── package.json
+└── server.js                  # Entry point (Express app initialization)
+
+# Frontend
+
+frontend/
+├── public/                    # Static assets
+├── src/
+│   ├── api/                   # Axios/Fetch instances & API calls
+│   │   ├── axios.js           # Base configuration (withCredentials: true for cookies)
+│   │   ├── auth.api.js
+│   │   ├── complaint.api.js
+│   │   └── evidence.api.js
+│   │
+│   ├── assets/                # Images, icons, CSS files
+│   │
+│   ├── components/            # Reusable UI parts (Mobile-friendly)
+│   │   ├── common/            # Buttons, Inputs, Modals, Loaders
+│   │   ├── camera/            # WebRTC Camera interface (Mobile prioritized)
+│   │   ├── maps/              # Leaflet Map wrappers (Incident location, Heatmap)
+│   │   └── cards/             # Complaint Cards (Citizen & Official views)
+│   │
+│   ├── context/               # Global state (React Context)
+│   │   └── AuthContext.jsx    # Manages user session and RBAC roles
+│   │
+│   ├── hooks/                 # Custom React Hooks
+│   │   ├── useLocation.js     # Handles Geolocation API permissions & capture
+│   │   └── useCamera.js       # Handles mobile camera streams
+│   │
+│   ├── layouts/               # Layout wrappers for different user roles
+│   │   ├── CitizenLayout.jsx  # Bottom navigation bar (mobile-friendly)
+│   │   ├── OfficialLayout.jsx # Sidebar/Navbar for dashboards
+│   │   └── AdminLayout.jsx    
+│   │
+│   ├── pages/                 # Full Page Components
+│   │   ├── auth/              # Login, Register
+│   │   ├── citizen/           # Home, CaptureEvidence, CreateComplaint, MyComplaints
+│   │   ├── official/          # DeptDashboard, ComplaintDetails
+│   │   └── admin/             # ManageOfficials, ManageDepartments
+│   │
+│   ├── utils/                 # Helper functions
+│   │   ├── dateFormatter.js   
+│   │   └── statusColors.js    # Tailwind color mappings for statuses (e.g. RESOLVED = green)
+│   │
+│   ├── App.jsx                # Main React Router setup (Protected Routes)
+│   ├── index.css              # Tailwind imports
+│   └── main.jsx               # React entry point
+│
+├── .env                       # Frontend env variables (e.g., VITE_API_BASE_URL)
+├── package.json
+├── tailwind.config.js
+└── vite.config.js
