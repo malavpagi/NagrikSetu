@@ -1,7 +1,6 @@
 # Dependencies
 
 node_modules/
-package.json
 
 # Environment variables / secrets
 
