@@ -12,7 +12,12 @@ import {
 
 const router = express.Router();
 
-
+// Make sure paths match your actual middleware filenames
+import { verifyToken } from "../middlewares/auth.middleware.js";
+import { verifyRole } from "../middlewares/role.middleware.js";
+// Middleware guard: Protect all admin routes
+router.use(verifyToken);
+router.use(verifyRole(["SUPER_ADMIN"]));
 
 // Officials endpoints
 router.get("/officials", getOfficials);
@@ -28,10 +33,3 @@ router.post("/officials", createOfficial);
 export default router;
 
 
-
-// Make sure paths match your actual middleware filenames
-// import { verifyToken } from "../middlewares/auth.middleware.js";
-// import { verifyRole } from "../middlewares/role.middleware.js";
-// // Middleware guard: Protect all admin routes
-// router.use(verifyToken);
-// router.use(verifyRole(["SUPER_ADMIN"]));
