@@ -1,11 +1,16 @@
+
 import 'dotenv/config';
 import app from './app.js';
 import connectDB from "./src/config/db.js";
 
-// MongoDB connection
-connectDB();
+
+// Connect to MongoDB, seed default departments, then start server
+connectDB().then(async () => {
 
 
-app.listen(3000, ()=>{
-    console.log("http://localhost:3000");
+  app.listen(3000, () => {
+    console.log("Server running at http://localhost:3000");
+  });
+}).catch((err) => {
+  console.error("Database connection failed:", err);
 });

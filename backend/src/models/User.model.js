@@ -40,12 +40,6 @@ const userSchema = new mongoose.Schema(
       default: "CITIZEN",
     },
 
-    employeeId: {
-      type: String,
-      trim: true,
-      default: null,
-    },
-
     departmentCode: {
       type: String,
       ref: "Department",

@@ -41,8 +41,7 @@ export const registerUserFunct = async (req, res) => {
       email,
       passwordHash,
       role: "CITIZEN",
-      employeeId: null,
-      departmentId: null,
+      departmentCode: null,
       isActive: true,
     });
 
@@ -111,7 +110,7 @@ export const loginUserFunct = async (req, res) => {
 
     // Generate accessToken JWT Token
     const accessToken = jwt.sign(
-      {userId: user._id, role: user.role, departmentId: user.departmentId},
+      {userId: user._id, role: user.role, departmentCode: user.departmentCode},
       process.env.JWT_ACCESS_TOKEN_SECRET || "fallback_secret_key",
       { expiresIn: "3m" }       // 3 min
     );
@@ -139,7 +138,7 @@ export const loginUserFunct = async (req, res) => {
         fullName: user.fullName,
         email: user.email,
         role: user.role,
-        departmentId: user.departmentId,
+        departmentCode: user.departmentCode,
       },
       accessToken 
     });
@@ -173,7 +172,7 @@ export const refreshAccessToken = async (req, res) => {
         );
 
         const newAccessToken = jwt.sign(
-            {userId: decoded.userId, role: decoded.role, departmentId: decoded.departmentId},
+            {userId: decoded.userId, role: decoded.role, departmentCode: decoded.departmentCode},
             process.env.JWT_ACCESS_TOKEN_SECRET,
             {expiresIn: "3m"}
         );
