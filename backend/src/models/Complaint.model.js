@@ -7,7 +7,11 @@ const complaintSchema = new mongoose.Schema(
       ref: "Department",
       required: true,
     },
-
+    departmentName : {
+      type : String,
+      required : true,
+      trim : true
+    },
     problemType: {
       type: String,
       required: true,
@@ -71,6 +75,7 @@ const complaintSchema = new mongoose.Schema(
       {
         type: String,
         trim: true,
+        default : null,
       },
     ],
 
