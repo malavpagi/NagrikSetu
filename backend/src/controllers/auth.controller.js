@@ -151,42 +151,53 @@ export const loginUserFunct = async (req, res) => {
   }
 };
 
-
 // ==========================================
 // 3. REFRESH TOKEN CONTROLLER
 // ==========================================
 export const refreshAccessToken = async (req, res) => {
-    try {
-        const { refreshToken } = req.cookies;
+  try {
+    const { refreshToken } = req.cookies;
 
-        if (!refreshToken) {
-            return res.status(401).json({
-                success: false,
-                message: "Refresh token missing",
-            });
-        }
-
-        const decoded = jwt.verify(
-            refreshToken,
-            process.env.JWT_REFRESH_TOKEN_SECRET
-        );
-
-        const newAccessToken = jwt.sign(
-            {userId: decoded.userId, role: decoded.role, departmentCode: decoded.departmentCode},
-            process.env.JWT_ACCESS_TOKEN_SECRET,
-            {expiresIn: "3m"}
-        );
-
-        return res.status(200).json({
-            success: true,
-            accessToken: newAccessToken,
-        });
-
-    } catch (error) {
-
-        return res.status(401).json({
-            success: false,
-            message: "Invalid or expired refresh token",
-        });
+    if (!refreshToken) {
+      return res.status(401).json({
+        success: false,
+        message: "Refresh token missing",
+      });
     }
+
+    const decoded = jwt.verify(
+      refreshToken,
+      process.env.JWT_REFRESH_TOKEN_SECRET
+    );
+
+    // Fetch user to re-attach role and departmentCode
+    const user = await UserCollection.findById(decoded.userId);
+
+    if (!user || !user.isActive) {
+      return res.status(401).json({
+        success: false,
+        message: "User not found or account deactivated",
+      });
+    }
+
+    const newAccessToken = jwt.sign(
+      {
+        userId: user._id,
+        role: user.role,
+        departmentCode: user.departmentCode,
+      },
+      process.env.JWT_ACCESS_TOKEN_SECRET,
+      { expiresIn: "3m" }
+    );
+
+    return res.status(200).json({
+      success: true,
+      accessToken: newAccessToken,
+    });
+  } catch (error) {
+    return res.status(401).json({
+      success: false,
+      message: "Invalid or expired refresh token",
+    });
+  }
 };

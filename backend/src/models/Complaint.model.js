@@ -109,7 +109,6 @@ const complaintSchema = new mongoose.Schema(
       enum: [
         "SUBMITTED",
         "UNDER_REVIEW",
-        "ASSIGNED",
         "WORK_IN_PROGRESS",
         "RESOLVED",
         "REJECTED",
