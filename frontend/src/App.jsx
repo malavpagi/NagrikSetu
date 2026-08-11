@@ -17,7 +17,7 @@ function App(){
             <Route path="/register" element={<RegisterPage/>} />
             <Route path="/login" element={<LoginPage/>} />
 
-            <Route path="/citizen"
+            <Route path="/citizen/*"
                 element={
                     <ProtectedRoute allowedRoles={["CITIZEN"]}>
                         <CitizenHome />
@@ -25,7 +25,7 @@ function App(){
                 }
             />
 
-            <Route path="/official"
+            <Route path="/official/*"
                 element={
                     <ProtectedRoute allowedRoles={["DEPARTMENT_OFFICIAL"]}>
                         <OfficialDashboard />
@@ -33,7 +33,7 @@ function App(){
                 }
             />
 
-            <Route path="/admin"
+            <Route path="/admin/*"
                 element={
                     <ProtectedRoute allowedRoles={["SUPER_ADMIN"]}>
                         <AdminDashboard />
