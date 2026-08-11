@@ -36,7 +36,7 @@ export const getAddressFromCoords = async (lat, lon) => {
     const response = await fetch(`${NOMINATIM_URL}?${params}`, {
     headers: {
         // Nominatim requires a meaningful User-Agent
-        "User-Agent": "YourHackathonApp/1.0 (your-email@example.com)",
+        "User-Agent": "YourHackathonApp/1.0 (malavpagi8@gmail.com)",
         },
     });
 
@@ -68,7 +68,7 @@ export const captureEvidence = async (req, res) => {
         }
 
         const newEvidence = await EvidenceCollection.create({
-            userId: req.userid,
+            userId: req.user._id,
             imagePath: req.file.path,
             latitude: parseFloat(latitude),
             longitude: parseFloat(longitude),
@@ -87,7 +87,7 @@ export const captureEvidence = async (req, res) => {
 // ==========================================
 export const getEvidences = async (req, res) => {
     try {
-        const evidences = await EvidenceCollection.find({ userId: req.userid })
+        const evidences = await EvidenceCollection.find({ userId: req.user._id })
             .sort({ capturedAt: -1 });
         
         res.status(200).json({ evidences });
@@ -102,7 +102,7 @@ export const getEvidences = async (req, res) => {
 export const submitComplaint = async (req, res) => {
     try {
         const { evidenceId, description, contactNumber } = req.body;
-        const userid = req.userid;
+        const userid = req.user._id;
 
         // 1. Fetch Evidence
         const evidence = await EvidenceCollection.findById(evidenceId);
@@ -182,6 +182,7 @@ export const submitComplaint = async (req, res) => {
             // CREATE NEW SCENARIO (No match found within 50m)
             const newComplaint = await ComplaintCollection.create({
                 departmentId: department._id,
+                departmentName: department.name,
                 problemType: aiResult.problemType.toUpperCase(),
                 complaintIds: [uniqueComplaintId],
                 userIds: [userid],
@@ -220,8 +221,8 @@ export const submitComplaint = async (req, res) => {
 export const getMyComplaints = async (req, res) => {
     try {
         // Find complaints where the citizen's ID is in the userIds array
-        const complaints = await ComplaintCollection.find({ userIds: req.userid })
-            .populate('departmentId', 'name') // Pulls the actual department name
+        const complaints = await ComplaintCollection.find({ userIds: req.user._id })
+            .populate('departmentId', 'departmentName') // Pulls the actual department name
             .populate('evidenceIds')          // Pulls the image paths
             .sort({ createdAt: -1 });
 

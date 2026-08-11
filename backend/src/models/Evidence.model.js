@@ -4,7 +4,7 @@ const evidenceSchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "UserCollection",
       required: true,
     },
 

@@ -42,7 +42,7 @@ const userSchema = new mongoose.Schema(
 
     departmentCode: {
       type: String,
-      ref: "Department",
+      ref: "DepartmentCollection",
       default: null,
     },
 
