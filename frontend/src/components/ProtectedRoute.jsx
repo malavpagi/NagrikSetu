@@ -7,6 +7,7 @@ function ProtectedRoute({ allowedRoles, children }) {
 
     // Not logged in
     if (!user || !accessToken) {
+        console.log(user , accessToken);
         return <Navigate to="/login" replace />;
     }
 

@@ -7,8 +7,8 @@ function CitizenHome(){
     return (<>
         <h1>This is Citizen Dashboard</h1>
         <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/profile" element={<ProfilePage/>} />
+            <Route index element={<HomePage />} />
+            <Route path="profile" element={<ProfilePage />} />
         </Routes>
     </>);
 }

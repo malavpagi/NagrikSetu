@@ -31,7 +31,7 @@ function LoginPage(){
             const res = await loginUserFunct(userData);
             if (res.success) {
                 alert("Login successful!");
-                console.log(res.user);
+                console.log(">>>>",res.user);
 
                 login(res.user, res.accessToken);
 
