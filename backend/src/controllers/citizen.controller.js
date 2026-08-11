@@ -1,7 +1,7 @@
 import EvidenceCollection from '../models/Evidence.model.js';
 import ComplaintCollection from '../models/Complaint.model.js';
 import DepartmentCollection from '../models/Department.model.js'; 
-import { validateComplaintWithAI } from '../services/gemini.service.js';
+import { validateComplaintWithAI } from '../services/gemini.services.js';
 import { getCentroid, getDistanceInMeters, getPriorityLevel } from '../utils/geoUtils.js'
 import crypto from 'crypto'; // For generating unique complaint string IDs
 

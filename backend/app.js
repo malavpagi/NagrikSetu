@@ -8,7 +8,7 @@ import errorHandlerMiddleware from './src/middlewares/errorHandlerMiddleware.js'
 
 import authRoutes from "./src/routes/auth.routes.js";
 import adminRoutes from "./src/routes/admin.routes.js";
-// import citizenRoutes from "./src/routes/citizen.routes.js";
+import citizenRoutes from "./src/routes/citizen.routes.js";
 // import officialRouted from "./src/routes/official.routes.js"; 
 
 const app = express();
@@ -28,7 +28,7 @@ app.get("/", (req, res)=>{
 
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
-// app.use('/api/citizen', citizenRoutes);
+app.use('/api/citizen', citizenRoutes);
 // app.use('/api/official', officialRouted);
 
 app.use(errorHandlerMiddleware);

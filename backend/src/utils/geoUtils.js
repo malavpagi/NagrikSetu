@@ -1,6 +1,6 @@
 
 // 1. Haversine Formula: Calculates distance in meters between two lat/lng points
-const getDistanceInMeters = (lat1, lon1, lat2, lon2) => {
+export const getDistanceInMeters = (lat1, lon1, lat2, lon2) => {
     const R = 6371e3; // Earth radius in meters
     const toRad = (value) => (value * Math.PI) / 180;
     const dLat = toRad(lat2 - lat1);
@@ -13,7 +13,7 @@ const getDistanceInMeters = (lat1, lon1, lat2, lon2) => {
 };
 
 // 2. Centroid Calculator: Finds the exact middle point of a group of locations
-const getCentroid = (locationsArray) => {
+export const getCentroid = (locationsArray) => {
     let sumLat = 0, sumLng = 0;
     locationsArray.forEach(loc => {
         sumLat += loc.latitude;
@@ -26,7 +26,7 @@ const getCentroid = (locationsArray) => {
 };
 
 // 3. Priority Scaler
-const getPriorityLevel = (mergeCount) => {
+export const getPriorityLevel = (mergeCount) => {
     if (mergeCount >= 50) return "VERY_HIGH";
     if (mergeCount >= 10) return "HIGH";
     return "NORMAL";
