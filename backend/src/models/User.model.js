@@ -46,8 +46,8 @@ const userSchema = new mongoose.Schema(
       default: null,
     },
 
-    departmentId: {
-      type: mongoose.Schema.Types.ObjectId,
+    departmentCode: {
+      type: String,
       ref: "Department",
       default: null,
     },
