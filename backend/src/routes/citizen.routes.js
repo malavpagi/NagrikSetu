@@ -3,7 +3,8 @@ import {
     captureEvidence, 
     getEvidences, 
     submitComplaint, 
-    getMyComplaints 
+    getMyComplaints,
+    deleteEvidence
 } from '../controllers/citizen.controller.js'
 
 const router = express.Router();
@@ -33,11 +34,15 @@ router.post('/evidence', uploadEvidence.single('image'), captureEvidence);
 // Frontend calls: GET /api/citizen/evidences
 router.get('/evidences', getEvidences);
 
-// 3. Submit a New Complaint (AI processing + Grouping)
+// 3. Delete Evidence Route (Expects the ID in the URL)
+// Frontend calls: DELETE /api/citizen/evidence/64f1a2b...
+router.delete('/evidence/:id', deleteEvidence);
+
+// 4. Submit a New Complaint (AI processing + Grouping)
 // Frontend calls: POST /api/citizen/complaint
 router.post('/complaint', submitComplaint);
 
-// 4. View My Complaints
+// 5. View My Complaints
 // Frontend calls: GET /api/citizen/complaints
 router.get('/complaints', getMyComplaints);
 

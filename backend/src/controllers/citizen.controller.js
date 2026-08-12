@@ -4,6 +4,8 @@ import DepartmentCollection from '../models/Department.model.js';
 import { validateComplaintWithAI } from '../services/gemini.services.js';
 import { getCentroid, getDistanceInMeters, getPriorityLevel } from '../utils/geoUtils.js'
 import crypto from 'crypto'; // For generating unique complaint string IDs
+import fs from 'fs';
+import path from 'path';
 
 
 // Helper function: Reverse Geocoding (Nominatim API - Free)
@@ -93,6 +95,33 @@ export const getEvidences = async (req, res) => {
         res.status(200).json({ evidences });
     } catch (error) {
         res.status(500).json({ error: "Failed to fetch evidences" });
+    }
+};
+
+export const deleteEvidence = async (req, res) => {
+    try {
+        const evidenceId = req.params.id;
+        const userId = req.user._id;
+
+        // 1. Find the evidence and ensure it belongs to this user
+        const evidence = await EvidenceCollection.findOne({ _id: evidenceId, userId: userId });
+        if (!evidence) {
+            return res.status(404).json({ error: "Evidence not found or unauthorized." });
+        }
+
+        // 2. Delete the physical image file from the server's disk
+        const filePath = path.resolve(evidence.imagePath); 
+        fs.unlink(filePath, (err) => {
+            if (err) console.error("Warning: Failed to delete file from disk:", err);
+        });
+
+        // 3. Delete the document from MongoDB
+        await EvidenceCollection.findByIdAndDelete(evidenceId);
+
+        res.status(200).json({ success: true, message: "Evidence deleted successfully." });
+    } catch (error) {
+        console.error("Delete Evidence Error:", error);
+        res.status(500).json({ error: "Failed to delete evidence." });
     }
 };
 
