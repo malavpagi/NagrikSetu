@@ -33,9 +33,7 @@ function CaptureEvidence() {
 
                 // 3. Send to Backend
                 try {
-                    await api.post("/citizen/evidence", formData, {
-                        headers: { "Content-Type": "multipart/form-data" }
-                    });
+                    await api.post("/citizen/evidence", formData);
                     alert("Evidence Captured Successfully!");
                     setLoadingMsg("");
                     
