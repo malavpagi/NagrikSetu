@@ -1,9 +1,11 @@
-import { Routes, Route, Link, useNavigate } from "react-router-dom";
+import { Routes, Route, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 
 import ActiveOfficials from "./ActiveOfficials.jsx";
 import InactiveOfficials from "./InactiveOfficials.jsx";
 import CreateOfficial from "./CreateOfficial.jsx";
+import { IconLogout } from "../../components/icons.jsx";
+import "../../styles/global.css";
 
 function AdminDashboard() {
   const { logout, user } = useAuth();
@@ -15,32 +17,31 @@ function AdminDashboard() {
   };
 
   return (
-    <>
-      <header>
-        <h1>Admin Dashboard</h1>
-        <p>Logged in as: {user?.fullName || user?.username}</p>
-        <button onClick={handleLogout}>Logout</button>
+    <div className="ns-app">
+      <header className="ns-topbar">
+        <div className="ns-brand">
+          <div className="ns-brand-mark">
+            Nagrik Setu
+            <small>Admin register</small>
+          </div>
+        </div>
+        <div className="ns-topbar-meta">
+          <strong>{user?.fullName || user?.username}</strong>
+          <div>
+            <button className="btn btn-ghost btn-sm" onClick={handleLogout}>
+              <IconLogout width={15} height={15} /> Logout
+            </button>
+          </div>
+        </div>
       </header>
 
-      <hr />
-
-      <nav>
-        <ul>
-          <li>
-            <Link to="/admin/active_officials">Active Officials</Link>
-          </li>
-          <li>
-            <Link to="/admin/inactive_officials">Inactive Officials</Link>
-          </li>
-          <li>
-            <Link to="/admin/create_official">Create Official</Link>
-          </li>
-        </ul>
+      <nav className="ns-nav">
+        <NavLink to="/admin/active_officials" className={({ isActive }) => isActive ? "active" : ""}>Active officials</NavLink>
+        <NavLink to="/admin/inactive_officials" className={({ isActive }) => isActive ? "active" : ""}>Inactive officials</NavLink>
+        <NavLink to="/admin/create_official" className={({ isActive }) => isActive ? "active" : ""}>Create official</NavLink>
       </nav>
 
-      <hr />
-
-      <main>
+      <main className="ns-main">
         <Routes>
           <Route index element={<ActiveOfficials />} />
           <Route path="active_officials" element={<ActiveOfficials />} />
@@ -48,7 +49,7 @@ function AdminDashboard() {
           <Route path="create_official" element={<CreateOfficial />} />
         </Routes>
       </main>
-    </>
+    </div>
   );
 }
 

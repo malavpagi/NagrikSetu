@@ -48,7 +48,7 @@ function CreateOfficial() {
 
       await createOfficialApi(payload);
       alert("Official created successfully!");
-      
+
       // Navigate to active or inactive page depending on selected status
       if (formData.isActive) {
         navigate("/admin/active_officials");
@@ -68,120 +68,67 @@ function CreateOfficial() {
 
   return (
     <section>
-      <h2>Create New Official</h2>
-      <form onSubmit={handleSubmit}>
+      <div className="ns-page-head">
         <div>
-          <label>
-            Username:{" "}
-            <input
-              type="text"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              required
-            />
-          </label>
+          <p className="ns-page-eyebrow">Registry entry</p>
+          <h2>Create new official</h2>
         </div>
-        <br />
+      </div>
 
-        <div>
-          <label>
-            Full Name:{" "}
-            <input
-              type="text"
-              name="fullName"
-              value={formData.fullName}
-              onChange={handleChange}
-              required
-            />
-          </label>
-        </div>
-        <br />
+      <div className="ns-card" style={{ maxWidth: 520 }}>
+        <form className="ns-form" onSubmit={handleSubmit}>
+          <div className="field">
+            <label className="field-label" htmlFor="username">Username</label>
+            <input id="username" type="text" name="username" value={formData.username} onChange={handleChange} required />
+          </div>
 
-        <div>
-          <label>
-            Mobile:{" "}
-            <input
-              type="text"
-              name="mobile"
-              value={formData.mobile}
-              onChange={handleChange}
-              required
-            />
-          </label>
-        </div>
-        <br />
+          <div className="field">
+            <label className="field-label" htmlFor="fullName">Full name</label>
+            <input id="fullName" type="text" name="fullName" value={formData.fullName} onChange={handleChange} required />
+          </div>
 
-        <div>
-          <label>
-            Email:{" "}
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </label>
-        </div>
-        <br />
+          <div className="field">
+            <label className="field-label" htmlFor="mobile">Mobile</label>
+            <input id="mobile" type="text" name="mobile" value={formData.mobile} onChange={handleChange} required />
+          </div>
 
-        <div>
-          <label>
-            Password:{" "}
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
-          </label>
-        </div>
-        <br />
+          <div className="field">
+            <label className="field-label" htmlFor="email">Email</label>
+            <input id="email" type="email" name="email" value={formData.email} onChange={handleChange} required />
+          </div>
 
-        <div>
-          <label>
-            Department:{" "}
-            <select
-              name="departmentCode"
-              value={formData.departmentCode}
-              onChange={handleChange}
-              required
-            >
-              <option value="">-- Select Department --</option>
+          <div className="field">
+            <label className="field-label" htmlFor="password">Temporary password</label>
+            <input id="password" type="password" name="password" value={formData.password} onChange={handleChange} required />
+          </div>
+
+          <div className="field">
+            <label className="field-label" htmlFor="departmentCode">Department</label>
+            <select id="departmentCode" name="departmentCode" value={formData.departmentCode} onChange={handleChange} required>
+              <option value="">Select a department</option>
               {departments.map((dept) => (
                 <option key={dept._id} value={dept.code}>
                   {dept.name} ({dept.code})
                 </option>
               ))}
             </select>
-          </label>
-        </div>
-        <br />
+          </div>
 
-        <div>
-          <label>
-            Active Account:{" "}
-            <input
-              type="checkbox"
-              name="isActive"
-              checked={formData.isActive}
-              onChange={handleChange}
-            />
+          <label className="field field-checkbox">
+            <input type="checkbox" name="isActive" checked={formData.isActive} onChange={handleChange} />
+            <span className="field-label" style={{ marginBottom: 0 }}>Activate account immediately</span>
           </label>
-        </div>
-        <br />
 
-        <div>
-          <button type="submit" disabled={loading}>
-            {loading ? "Creating..." : "Create"}
-          </button>{" "}
-          <button type="button" onClick={handleCancel}>
-            Cancel
-          </button>
-        </div>
-      </form>
+          <div className="ns-flex-actions">
+            <button type="submit" className="btn btn-primary" disabled={loading}>
+              {loading ? "Creating…" : "Create official"}
+            </button>
+            <button type="button" className="btn btn-outline" onClick={handleCancel}>
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
     </section>
   );
 }

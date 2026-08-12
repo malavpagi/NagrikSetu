@@ -1,6 +1,8 @@
-function HomePage(){
-    return <>
-        <h1>THis is home page of citizen</h1>
-    </>
+function HomePage() {
+  return (
+    <div className="ns-state">
+      This is the citizen home page.
+    </div>
+  );
 }
 export default HomePage;

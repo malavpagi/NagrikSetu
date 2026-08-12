@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { getOfficialComplaintsApi, updateComplaintStatusApi } from "../../api/official.api";
 import ComplaintDetailModal from "./ComplaintDetailModal";
+import StatusStamp from "../../components/StatusStamp.jsx";
 
 function IncomingComplaints() {
   const [complaints, setComplaints] = useState([]);
@@ -37,27 +38,33 @@ function IncomingComplaints() {
     setSelectedComplaint(complaint);
   };
 
-  if (loading) return <div>Loading incoming complaints...</div>;
-  if (error) return <div>Error: {error}</div>;
+  if (loading) return <div className="ns-state"><div className="ns-spinner" />Loading incoming complaints…</div>;
+  if (error) return <div className="ns-state ns-state-error">{error}</div>;
 
   return (
     <section>
-      <h2>Incoming Complaints List</h2>
-      {complaints.length === 0 ? (
-        <p>No incoming complaints available.</p>
-      ) : (
+      <div className="ns-page-head">
         <div>
+          <p className="ns-page-eyebrow">Queue</p>
+          <h2>Incoming complaints</h2>
+        </div>
+      </div>
+
+      {complaints.length === 0 ? (
+        <p className="ns-empty">No incoming complaints available.</p>
+      ) : (
+        <div className="ns-card-list">
           {complaints.map((item) => (
-            <article
-              key={item._id}
-              onClick={() => handleCardClick(item)}
-              style={{ border: "1px solid #333", padding: "10px", marginBottom: "10px", cursor: "pointer" }}
-            >
-              <h3>Type: {item.problemType}</h3>
-              <p><strong>Priority:</strong> {item.priority}</p>
-              <p><strong>Status:</strong> {item.status}</p>
-              <p><strong>Merge Count:</strong> {item.mergeCount}</p>
-              <p><strong>AI Summary:</strong> {item.aiSummary}</p>
+            <article key={item._id} className="ns-card ns-card-clickable" onClick={() => handleCardClick(item)}>
+              <div className="ns-record-head">
+                <div className="ns-record-title">{item.problemType}</div>
+                <StatusStamp status={item.status} />
+              </div>
+              <p className="ns-quote">{item.aiSummary}</p>
+              <div className="ns-record-meta" style={{ gridTemplateColumns: "1fr 1fr" }}>
+                <p><b>Priority:</b> {item.priority}</p>
+                <p><b>Merged reports:</b> {item.mergeCount}</p>
+              </div>
             </article>
           ))}
         </div>
