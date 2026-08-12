@@ -6,6 +6,20 @@ function ComplaintDetailModal({ complaint, onClose, onStatusUpdated }) {
   const [rejectionReason, setRejectionReason] = useState("");
   const [showRejectInput, setShowRejectInput] = useState(false);
 
+  // Helper to format backend file paths correctly for URLs
+  const getImageUrl = (rawPath) => {
+    if (!rawPath) return "";
+    // 1. Normalize Windows backslashes (\) to standard forward slashes (/)
+    let cleanPath = rawPath.replace(/\\/g, "/");
+    
+    // 2. Remove leading slash if present
+    if (cleanPath.startsWith("/")) {
+      cleanPath = cleanPath.slice(1);
+    }
+
+    return `http://localhost:3000/${cleanPath}`;
+  };
+
   const handleStatusChange = async (newStatus) => {
     if (newStatus === "REJECTED" && !rejectionReason.trim()) {
       alert("Please provide a reason for rejection.");
@@ -39,11 +53,10 @@ function ComplaintDetailModal({ complaint, onClose, onStatusUpdated }) {
         zIndex: 1000,
       }}
     >
-      <div style={{ background: "#fff", padding: "20px", maxWidth: "800px", margin: "auto" }}>
+      <div style={{ background: "#fff", padding: "20px", maxWidth: "800px", margin: "auto", borderRadius: "8px" }}>
         <button onClick={onClose} style={{ float: "right" }}>Close [X]</button>
         <h2>Complaint Details</h2>
 
-        {/* Aggregate Metadata */}
         <div>
           <p><strong>Department:</strong> {complaint.departmentName}</p>
           <p><strong>Problem Type:</strong> {complaint.problemType}</p>
@@ -58,18 +71,20 @@ function ComplaintDetailModal({ complaint, onClose, onStatusUpdated }) {
 
         <h3>Subscribed Reports ({complaint.descriptions?.length || 0})</h3>
 
-        {/* List of individual merged complaints */}
         {complaint.descriptions?.map((desc, idx) => {
           const location = complaint.locations?.[idx];
           const user = complaint.userIds?.[idx];
           const contact = complaint.contactNumbers?.[idx];
           const evidence = complaint.evidenceIds?.[idx];
 
+          // Use imagePath from EvidenceCollection
+          const imageSrc = evidence ? getImageUrl(evidence.imagePath) : null;
+
           return (
-            <div key={idx} style={{ border: "1px solid #ccc", padding: "10px", marginBottom: "10px" }}>
+            <div key={idx} style={{ border: "1px solid #ccc", padding: "12px", marginBottom: "12px", borderRadius: "6px" }}>
               <h4>Report #{idx + 1}</h4>
               <p><strong>Description:</strong> {desc}</p>
-              
+
               {location && (
                 <div>
                   <p><strong>Text Location:</strong> {location.textLocation}</p>
@@ -77,7 +92,6 @@ function ComplaintDetailModal({ complaint, onClose, onStatusUpdated }) {
                 </div>
               )}
 
-              {/* User Privacy Rules */}
               {user && (
                 <div>
                   <p><strong>User:</strong> {user.username || "Anonymous / Unlisted"}</p>
@@ -85,17 +99,29 @@ function ComplaintDetailModal({ complaint, onClose, onStatusUpdated }) {
                 </div>
               )}
 
-              {/* Evidence Rendering */}
-              {evidence && (
-                <div>
-                  <p><strong>Evidence File:</strong></p>
+              {/* Fixed Evidence Image View */}
+              {imageSrc ? (
+                <div style={{ marginTop: "10px" }}>
+                  <p style={{ margin: "0 0 5px 0" }}><strong>Evidence Photo:</strong></p>
                   <img
-                    src={`http://localhost:3000/${evidence.filePath}`}
-                    alt="Evidence"
-                    style={{ width: "150px", height: "150px", objectFit: "cover", cursor: "pointer" }}
-                    onClick={() => setSelectedImage(`http://localhost:3000/${evidence.filePath}`)}
+                    src={imageSrc}
+                    alt="Complaint Evidence"
+                    style={{
+                      width: "160px",
+                      height: "120px",
+                      objectFit: "cover",
+                      borderRadius: "6px",
+                      cursor: "pointer",
+                      border: "1px solid #ddd",
+                    }}
+                    onClick={() => setSelectedImage(imageSrc)}
+                    onError={(e) => {
+                      console.error("Failed to load image at:", imageSrc);
+                    }}
                   />
                 </div>
+              ) : (
+                <p style={{ color: "#888" }}><em>No evidence photo attached.</em></p>
               )}
             </div>
           );
@@ -103,7 +129,6 @@ function ComplaintDetailModal({ complaint, onClose, onStatusUpdated }) {
 
         <hr />
 
-        {/* Status Actions */}
         <div>
           <h3>Update Status</h3>
           {complaint.status === "UNDER_REVIEW" && (
@@ -139,7 +164,7 @@ function ComplaintDetailModal({ complaint, onClose, onStatusUpdated }) {
         </div>
       </div>
 
-      {/* Expanded Image Viewer Modal */}
+      {/* Fullscreen Image Preview */}
       {selectedImage && (
         <div
           style={{
@@ -156,7 +181,11 @@ function ComplaintDetailModal({ complaint, onClose, onStatusUpdated }) {
           }}
           onClick={() => setSelectedImage(null)}
         >
-          <img src={selectedImage} alt="Expanded Evidence" style={{ maxWidth: "90%", maxHeight: "90%" }} />
+          <img
+            src={selectedImage}
+            alt="Expanded Evidence"
+            style={{ maxWidth: "90%", maxHeight: "90%", borderRadius: "8px" }}
+          />
         </div>
       )}
     </div>

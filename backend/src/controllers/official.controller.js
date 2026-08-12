@@ -1,5 +1,8 @@
 import ComplaintCollection from "../models/Complaint.model.js";
 import DepartmentCollection from "../models/Department.model.js";
+import UserCollection from "../models/User.model.js";         // Ensures User model registration
+import EvidenceCollection from "../models/Evidence.model.js"; // Ensures Evidence model registration
+
 
 // GET /api/official/complaints?category=incoming|processing|processed
 export const getComplaints = async (req, res) => {
@@ -34,7 +37,7 @@ export const getComplaints = async (req, res) => {
 
     const complaints = await ComplaintCollection.find(query)
       .populate("userIds", "username fullName email")
-      .populate("evidenceIds", "filePath fileType")
+      .populate("evidenceIds", "imagePath latitude longitude capturedAt")
       .sort({ updatedAt: -1 });
 
     return res.status(200).json({

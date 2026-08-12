@@ -29,7 +29,15 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended:true }));
 
 // Serve uploads folder as static static resources
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+// app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+// app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+// app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+
+// Allow cross-origin requests specifically for image assets
+app.use("/uploads", (req, res, next) => {
+  res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+  next();
+}, express.static(path.join(process.cwd(), "uploads")));
 
 app.get("/", (req, res)=>{
     res.send("<h1>Hello World hi</h1>");    
