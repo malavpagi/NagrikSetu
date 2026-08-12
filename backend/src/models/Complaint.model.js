@@ -4,7 +4,7 @@ const complaintSchema = new mongoose.Schema(
   {
     departmentId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Department",
+      ref: "DepartmentCollection",
       required: true,
     },
     departmentName : {
@@ -30,7 +30,7 @@ const complaintSchema = new mongoose.Schema(
     userIds: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: "UserCollection",
         required: true,
       },
     ],
@@ -38,7 +38,7 @@ const complaintSchema = new mongoose.Schema(
     evidenceIds: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Evidence",
+        ref: "EvidenceCollection",
         required: true,
       },
     ],
