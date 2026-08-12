@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { getOfficialComplaintsApi } from "../../api/official.api";
 import ComplaintDetailModal from "./ComplaintDetailModal";
+import ComplaintCard from "../../components/ComplaintCard.jsx";
 
 function ProcessingComplaints() {
   const [complaints, setComplaints] = useState([]);
@@ -24,28 +25,31 @@ function ProcessingComplaints() {
     fetchProcessing();
   }, []);
 
-  if (loading) return <div>Loading processing complaints...</div>;
-  if (error) return <div>Error: {error}</div>;
+  if (loading)
+    return (
+      <div className="flex justify-center py-16">
+        <div className="ns-spinner" />
+      </div>
+    );
+  if (error) return <div className="ns-card p-5" style={{ color: "var(--brick)" }}>{error}</div>;
 
   return (
     <section>
-      <h2>Processing Complaints (Work In Progress)</h2>
+      <h2 className="font-display font-bold text-xl mb-1" style={{ color: "var(--ink)" }}>
+        Processing complaints
+      </h2>
+      <p className="text-sm mb-6" style={{ color: "var(--ink-soft)" }}>
+        Work in progress. Update status once resolved or rejected.
+      </p>
+
       {complaints.length === 0 ? (
-        <p>No processing complaints found.</p>
+        <div className="ns-card text-center py-14 px-6">
+          <p className="font-semibold" style={{ color: "var(--ink)" }}>Nothing in progress right now</p>
+        </div>
       ) : (
-        <div>
+        <div className="grid sm:grid-cols-2 gap-3.5">
           {complaints.map((item) => (
-            <article
-              key={item._id}
-              onClick={() => setSelectedComplaint(item)}
-              style={{ border: "1px solid #333", padding: "10px", marginBottom: "10px", cursor: "pointer" }}
-            >
-              <h3>Type: {item.problemType}</h3>
-              <p><strong>Priority:</strong> {item.priority}</p>
-              <p><strong>Status:</strong> {item.status}</p>
-              <p><strong>Merge Count:</strong> {item.mergeCount}</p>
-              <p><strong>AI Summary:</strong> {item.aiSummary}</p>
-            </article>
+            <ComplaintCard key={item._id} item={item} onClick={() => setSelectedComplaint(item)} />
           ))}
         </div>
       )}

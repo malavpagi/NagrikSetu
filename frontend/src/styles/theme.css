@@ -1,0 +1,214 @@
+/* ============================================================
+   Nagrik-Setu — Design Tokens
+   A civic complaints platform. The visual language borrows from
+   municipal signage and government paperwork: stamped seals,
+   ledger typography, and a teal/marigold pairing drawn from
+   Indian civic signage rather than a generic tech palette.
+   ============================================================ */
+/* 
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap"); */
+
+:root {
+  /* Paper */
+  --paper: #f5f6f1;
+  --paper-dim: #eceee6;
+  --paper-card: #fffffd;
+
+  /* Ink */
+  --ink: #1e2622;
+  --ink-soft: #56635b;
+  --ink-faint: #8b968e;
+
+  /* Primary — signage teal */
+  --teal: #0f5c56;
+  --teal-dark: #0a413c;
+  --teal-tint: #e3efec;
+
+  /* Accent — marigold */
+  --marigold: #e8a33d;
+  --marigold-dark: #b97b1e;
+  --marigold-tint: #fbf0dc;
+
+  /* Status */
+  --forest: #3f7d5c;
+  --forest-tint: #e7f1ea;
+  --brick: #b54834;
+  --brick-tint: #f7e7e2;
+
+  --border: #dbe1d7;
+  --border-soft: #e7ebe3;
+
+  --shadow-card: 0 1px 2px rgba(30, 38, 34, 0.04), 0 6px 20px -8px rgba(15, 92, 86, 0.18);
+}
+
+.font-display {
+  font-family: "Space Grotesk", "IBM Plex Sans", sans-serif;
+}
+.font-body {
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
+}
+.font-mono {
+  font-family: "IBM Plex Mono", "SFMono-Regular", monospace;
+}
+
+body {
+  background-color: var(--paper);
+  color: var(--ink);
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
+}
+
+/* ---------- Paper card ---------- */
+.ns-card {
+  background: var(--paper-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow-card);
+}
+
+.ns-card-interactive {
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.ns-card-interactive:hover {
+  transform: translateY(-2px);
+  border-color: var(--teal);
+  box-shadow: 0 2px 4px rgba(30, 38, 34, 0.05), 0 14px 28px -12px rgba(15, 92, 86, 0.28);
+}
+.ns-card-interactive:active {
+  transform: translateY(0);
+}
+
+/* ---------- Buttons ---------- */
+.ns-btn {
+  font-family: "IBM Plex Sans", sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-radius: 10px;
+  padding: 0.7rem 1.25rem;
+  transition: transform 0.12s ease, background-color 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+  cursor: pointer;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+.ns-btn:active {
+  transform: scale(0.97);
+}
+.ns-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+.ns-btn-primary {
+  background: var(--teal);
+  color: #fdfdfb;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08) inset, 0 6px 14px -6px rgba(15, 92, 86, 0.55);
+}
+.ns-btn-primary:hover:not(:disabled) {
+  background: var(--teal-dark);
+}
+.ns-btn-accent {
+  background: var(--marigold);
+  color: #29200e;
+  box-shadow: 0 6px 14px -6px rgba(184, 128, 20, 0.55);
+}
+.ns-btn-accent:hover:not(:disabled) {
+  background: var(--marigold-dark);
+  color: #fff;
+}
+.ns-btn-ghost {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--ink-soft);
+}
+.ns-btn-ghost:hover:not(:disabled) {
+  border-color: var(--teal);
+  color: var(--teal-dark);
+  background: var(--teal-tint);
+}
+.ns-btn-danger {
+  background: transparent;
+  border-color: var(--brick);
+  color: var(--brick);
+}
+.ns-btn-danger:hover:not(:disabled) {
+  background: var(--brick);
+  color: #fff;
+}
+
+/* ---------- Inputs ---------- */
+.ns-field {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+}
+.ns-input {
+  width: 100%;
+  background: var(--paper-card);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 0.7rem 0.85rem;
+  font-size: 0.95rem;
+  color: var(--ink);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  font-family: "IBM Plex Sans", sans-serif;
+}
+.ns-input:focus {
+  outline: none;
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px var(--teal-tint);
+}
+
+/* ---------- Stamp badge — the signature element ----------
+   Styled like an ink seal stamped onto a civic document, used
+   everywhere a complaint / account status is shown. */
+.ns-stamp {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  border: 1.5px dashed currentColor;
+  transform: rotate(-2deg);
+  background: rgba(255, 255, 255, 0.5);
+}
+.ns-stamp::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.ns-stamp-neutral { color: var(--ink-soft); background: var(--paper-dim); }
+.ns-stamp-review { color: var(--marigold-dark); background: var(--marigold-tint); }
+.ns-stamp-progress { color: var(--teal-dark); background: var(--teal-tint); }
+.ns-stamp-resolved { color: var(--forest); background: var(--forest-tint); }
+.ns-stamp-rejected { color: var(--brick); background: var(--brick-tint); }
+
+/* ---------- Misc ---------- */
+.ns-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+}
+.ns-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+.ns-scrollbar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 999px; }
+
+@keyframes ns-spin { to { transform: rotate(360deg); } }
+.ns-spinner {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  border: 2.5px solid var(--teal-tint);
+  border-top-color: var(--teal);
+  animation: ns-spin 0.7s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ns-card-interactive, .ns-btn, .ns-spinner { transition: none; animation: none; }
+}

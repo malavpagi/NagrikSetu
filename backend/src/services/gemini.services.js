@@ -26,27 +26,99 @@ export const validateComplaintWithAI = async (imagePath, userDescription) => {
   // FIXES PROBLEM 2: Strict Prompting
   const prompt = `
     You are an AI assistant for a Citizen Grievance Management Platform.
-    Analyze the provided image and the user's description: "${userDescription}".
-    
-    Rules:
-    1. Check if the image shows a valid civic issue.
-    2. Check if the text matches the image.
-    3. Correct any grammar in the text to create a clean summary.
-    4. Categorize the department ONLY from this exact list:
-       ["ROAD_MAINTENANCE", "WATER_SUPPLY", "SANITATION", "SOLID_WASTE_MANAGEMENT", "ELECTRICITY", "SEWERAGE_AND_DRAINAGE", "TRAFFIC_MANAGEMENT", "PARKS_AND_GARDENS", "ENCROACHMENT", "PUBLIC_HEALTH"]
-       Do not invent new departments! If it doesn't fit, pick the closest or mark as invalid.
-    
-    You must respond exactly with this JSON schema:
+
+    Analyze the provided image and citizen description:
+    "${userDescription}"
+
+    Your tasks:
+
+    1. IMAGE VALIDATION
+    - Check whether the image clearly shows a genuine civic issue.
+    - Reject if it is unrelated, blank, extremely blurry/dark, inappropriate, or unusable.
+    - Do not assume a poor-quality image is fraud.
+
+    2. DESCRIPTION VALIDATION
+    - Check whether the description meaningfully describes a civic problem.
+    - Grammar/spelling mistakes are allowed and must NOT cause rejection.
+    - Reject descriptions that are empty, meaningless, abusive, inappropriate, spam, or unrelated.
+
+    3. IMAGE + DESCRIPTION
+    - Check whether the image and description describe the same problem.
+    - Reject if the description is unrelated, blank, entremely poor, inappropriate, or unusable.
+    - They do not need to contain exactly the same details.
+    - Reject only when they clearly contradict each other.
+
+    4. SUSPICIOUS EVIDENCE
+    - Detect obvious signs of manipulated, edited, or misleading images.
+    - Do not claim an image is definitely fake.
+    - Set suspiciousEvidence=true only when there are strong visible indications.
+    - You cannot verify whether the reported problem actually exists at the GPS location.
+
+    5. GRAMMAR
+    - Correct spelling and grammar while preserving the citizen's original meaning.
+    - Do not add facts that the citizen did not provide.
+
+    6. DEPARTMENT
+    Choose ONLY one from:
+    [
+      "ROAD_MAINTENANCE",
+      "WATER_SUPPLY",
+      "SANITATION",
+      "SOLID_WASTE_MANAGEMENT",
+      "ELECTRICITY",
+      "SEWERAGE_AND_DRAINAGE",
+      "TRAFFIC_MANAGEMENT",
+      "PARKS_AND_GARDENS",
+      "ENCROACHMENT",
+      "PUBLIC_HEALTH"
+    ]
+
+    Never create a new department. If no department fits, set department=null and isValidComplaint=false.
+
+    Examples:
+    Pothole/damaged road → ROAD_MAINTENANCE
+    Water leakage → WATER_SUPPLY
+    Garbage dumping → SOLID_WASTE_MANAGEMENT
+    Blocked drain → SEWERAGE_AND_DRAINAGE
+    Broken street light → ELECTRICITY
+
+    7. PROBLEM TYPE
+    Return a short type such as:
+    "POTHOLE", "ROAD_DAMAGE", "WATER_LEAKAGE", "BROKEN_PIPE",
+    "GARBAGE_DUMPING", "OVERFLOWING_DRAIN", "BROKEN_STREET_LIGHT".
+
+    8. SEVERITY
+    Estimate:
+    "LOW", "MEDIUM", or "HIGH".
+    Use null if insufficient information.
+
+    9. VALIDITY
+    isValidComplaint=true only if:
+    - Image is relevant and usable.
+    - Description is meaningful and relevant.
+    - Image and description match.
+    - It represents a civic issue.
+    - A predefined department can be identified.
+
+    Otherwise set isValidComplaint=false.
+
+    IMPORTANT:
+    A rejected complaint does NOT automatically mean the user is fraudulent.
+    The backend will separately track repeated rejected complaints.
+
+    RESPOND ONLY WITH VALID JSON:
+
     {
       "isValidComplaint": boolean,
-      "reason": string | null (if invalid, explain why briefly. e.g., "Image is of a dog"),
+      "reason": string | null,
       "imageRelevant": boolean,
       "descriptionRelevant": boolean,
       "imageDescriptionMatch": boolean,
-      "department": string | null (from the allowed list only),
-      "problemType": string | null (e.g., "POTHOLE", "BROKEN_PIPE"),
+      "suspiciousEvidence": boolean,
+      "department": string | null,
+      "problemType": string | null,
       "severity": "LOW" | "MEDIUM" | "HIGH" | null,
-      "summary": string | null (Grammatically corrected user description)
+      "summary": string | null
     }
   `;
 

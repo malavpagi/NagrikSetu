@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { updateComplaintStatusApi } from "../../api/official.api";
+import StatusStamp from "../../components/StatusStamp.jsx";
 
 function ComplaintDetailModal({ complaint, onClose, onStatusUpdated }) {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -9,14 +10,10 @@ function ComplaintDetailModal({ complaint, onClose, onStatusUpdated }) {
   // Helper to format backend file paths correctly for URLs
   const getImageUrl = (rawPath) => {
     if (!rawPath) return "";
-    // 1. Normalize Windows backslashes (\) to standard forward slashes (/)
     let cleanPath = rawPath.replace(/\\/g, "/");
-    
-    // 2. Remove leading slash if present
     if (cleanPath.startsWith("/")) {
       cleanPath = cleanPath.slice(1);
     }
-
     return `http://localhost:3000/${cleanPath}`;
   };
 
@@ -41,150 +38,146 @@ function ComplaintDetailModal({ complaint, onClose, onStatusUpdated }) {
 
   return (
     <div
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: "rgba(0,0,0,0.6)",
-        overflowY: "auto",
-        padding: "20px",
-        zIndex: 1000,
-      }}
+      className="fixed inset-0 overflow-y-auto p-4 ns-scrollbar font-body"
+      style={{ background: "rgba(20, 26, 23, 0.6)", zIndex: 1000 }}
     >
-      <div style={{ background: "#fff", padding: "20px", maxWidth: "800px", margin: "auto", borderRadius: "8px" }}>
-        <button onClick={onClose} style={{ float: "right" }}>Close [X]</button>
-        <h2>Complaint Details</h2>
-
-        <div>
-          <p><strong>Department:</strong> {complaint.departmentName}</p>
-          <p><strong>Problem Type:</strong> {complaint.problemType}</p>
-          <p><strong>Severity:</strong> {complaint.severity}</p>
-          <p><strong>Priority:</strong> {complaint.priority}</p>
-          <p><strong>Current Status:</strong> {complaint.status}</p>
-          <p><strong>Merged Reports Count:</strong> {complaint.mergeCount}</p>
-          <p><strong>AI Summary:</strong> {complaint.aiSummary}</p>
+      <div className="ns-card max-w-3xl mx-auto my-6 p-5 sm:p-7">
+        <div className="flex justify-between items-start mb-4 gap-3">
+          <h2 className="font-display font-bold text-xl" style={{ color: "var(--ink)" }}>
+            Complaint details
+          </h2>
+          <button onClick={onClose} className="ns-btn ns-btn-ghost text-xs px-3 py-1.5">
+            Close &times;
+          </button>
         </div>
 
-        <hr />
+        <div className="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm mb-4">
+          <p><span className="font-semibold" style={{ color: "var(--ink-soft)" }}>Department</span> — {complaint.departmentName}</p>
+          <p><span className="font-semibold" style={{ color: "var(--ink-soft)" }}>Problem type</span> — {complaint.problemType}</p>
+          <p><span className="font-semibold" style={{ color: "var(--ink-soft)" }}>Severity</span> — {complaint.severity}</p>
+          <p><span className="font-semibold" style={{ color: "var(--ink-soft)" }}>Priority</span> — {complaint.priority}</p>
+          <p className="flex items-center gap-2">
+            <span className="font-semibold" style={{ color: "var(--ink-soft)" }}>Status</span> <StatusStamp status={complaint.status} />
+          </p>
+          <p><span className="font-semibold" style={{ color: "var(--ink-soft)" }}>Merged reports</span> — {complaint.mergeCount}</p>
+        </div>
+        <p className="text-sm italic mb-5" style={{ color: "var(--ink-soft)" }}>"{complaint.aiSummary}"</p>
 
-        <h3>Subscribed Reports ({complaint.descriptions?.length || 0})</h3>
+        <hr className="ns-divider mb-5" />
 
-        {complaint.descriptions?.map((desc, idx) => {
-          const location = complaint.locations?.[idx];
-          const user = complaint.userIds?.[idx];
-          const contact = complaint.contactNumbers?.[idx];
-          const evidence = complaint.evidenceIds?.[idx];
+        <h3 className="font-display font-bold text-base mb-3" style={{ color: "var(--ink)" }}>
+          Subscribed reports ({complaint.descriptions?.length || 0})
+        </h3>
 
-          // Use imagePath from EvidenceCollection
-          const imageSrc = evidence ? getImageUrl(evidence.imagePath) : null;
+        <div className="flex flex-col gap-3 mb-5">
+          {complaint.descriptions?.map((desc, idx) => {
+            const location = complaint.locations?.[idx];
+            const user = complaint.userIds?.[idx];
+            const contact = complaint.contactNumbers?.[idx];
+            const evidence = complaint.evidenceIds?.[idx];
+            const imageSrc = evidence ? getImageUrl(evidence.imagePath) : null;
 
-          return (
-            <div key={idx} style={{ border: "1px solid #ccc", padding: "12px", marginBottom: "12px", borderRadius: "6px" }}>
-              <h4>Report #{idx + 1}</h4>
-              <p><strong>Description:</strong> {desc}</p>
+            return (
+              <div key={idx} className="p-3.5 rounded-xl" style={{ border: "1px solid var(--border)", background: "var(--paper-dim)" }}>
+                <p className="text-xs font-mono font-semibold mb-2" style={{ color: "var(--ink-faint)" }}>
+                  REPORT #{idx + 1}
+                </p>
+                <p className="text-sm mb-2" style={{ color: "var(--ink)" }}>{desc}</p>
 
-              {location && (
-                <div>
-                  <p><strong>Text Location:</strong> {location.textLocation}</p>
-                  <p><strong>Coordinates:</strong> Lat {location.latitude}, Lng {location.longitude}</p>
-                </div>
-              )}
+                {location && (
+                  <div className="text-xs font-mono mb-2" style={{ color: "var(--ink-soft)" }}>
+                    <p>{location.textLocation}</p>
+                    <p>Lat {location.latitude}, Lng {location.longitude}</p>
+                  </div>
+                )}
 
-              {user && (
-                <div>
-                  <p><strong>User:</strong> {user.username || "Anonymous / Unlisted"}</p>
-                  {contact && <p><strong>Contact:</strong> {contact}</p>}
-                </div>
-              )}
+                {user && (
+                  <div className="text-xs mb-2" style={{ color: "var(--ink-soft)" }}>
+                    <p>User — {user.username || "Anonymous / Unlisted"}</p>
+                    {contact && <p>Contact — {contact}</p>}
+                  </div>
+                )}
 
-              {/* Fixed Evidence Image View */}
-              {imageSrc ? (
-                <div style={{ marginTop: "10px" }}>
-                  <p style={{ margin: "0 0 5px 0" }}><strong>Evidence Photo:</strong></p>
+                {imageSrc ? (
                   <img
                     src={imageSrc}
-                    alt="Complaint Evidence"
-                    style={{
-                      width: "160px",
-                      height: "120px",
-                      objectFit: "cover",
-                      borderRadius: "6px",
-                      cursor: "pointer",
-                      border: "1px solid #ddd",
-                    }}
+                    alt="Complaint evidence"
+                    className="mt-1 rounded-lg cursor-pointer"
+                    style={{ width: "160px", height: "120px", objectFit: "cover", border: "1px solid var(--border)" }}
                     onClick={() => setSelectedImage(imageSrc)}
-                    onError={(e) => {
-                      console.error("Failed to load image at:", imageSrc);
-                    }}
+                    onError={() => console.error("Failed to load image at:", imageSrc)}
                   />
-                </div>
-              ) : (
-                <p style={{ color: "#888" }}><em>No evidence photo attached.</em></p>
-              )}
-            </div>
-          );
-        })}
+                ) : (
+                  <p className="text-xs italic" style={{ color: "var(--ink-faint)" }}>No evidence photo attached.</p>
+                )}
+              </div>
+            );
+          })}
+        </div>
 
-        <hr />
+        <hr className="ns-divider mb-5" />
 
         <div>
-          <h3>Update Status</h3>
-          {complaint.status === "UNDER_REVIEW" && (
-            <>
-              <button onClick={() => handleStatusChange("WORK_IN_PROGRESS")}>
-                Move to Work in Progress
-              </button>{" "}
-              <button onClick={() => setShowRejectInput(true)}>Reject Complaint</button>
-            </>
-          )}
+          <h3 className="font-display font-bold text-base mb-3" style={{ color: "var(--ink)" }}>
+            Update status
+          </h3>
+          <div className="flex flex-wrap gap-2.5">
+            {complaint.status === "UNDER_REVIEW" && (
+              <>
+                <button onClick={() => handleStatusChange("WORK_IN_PROGRESS")} className="ns-btn ns-btn-primary">
+                  Move to work in progress
+                </button>
+                <button onClick={() => setShowRejectInput(true)} className="ns-btn ns-btn-danger">
+                  Reject complaint
+                </button>
+              </>
+            )}
 
-          {complaint.status === "WORK_IN_PROGRESS" && (
-            <>
-              <button onClick={() => handleStatusChange("RESOLVED")}>Mark as Resolved</button>{" "}
-              <button onClick={() => setShowRejectInput(true)}>Reject Complaint</button>
-            </>
-          )}
+            {complaint.status === "WORK_IN_PROGRESS" && (
+              <>
+                <button onClick={() => handleStatusChange("RESOLVED")} className="ns-btn ns-btn-accent">
+                  Mark as resolved
+                </button>
+                <button onClick={() => setShowRejectInput(true)} className="ns-btn ns-btn-danger">
+                  Reject complaint
+                </button>
+              </>
+            )}
+          </div>
 
           {showRejectInput && (
-            <div style={{ marginTop: "10px" }}>
+            <div className="mt-3.5 flex flex-col sm:flex-row gap-2.5">
               <input
                 type="text"
-                placeholder="Enter rejection reason..."
+                placeholder="Enter rejection reason…"
                 value={rejectionReason}
                 onChange={(e) => setRejectionReason(e.target.value)}
-                style={{ width: "80%", padding: "5px" }}
+                className="ns-input flex-1"
               />
-              <br /><br />
-              <button onClick={() => handleStatusChange("REJECTED")}>Confirm Rejection</button> {" "}
-              <button onClick={() => setShowRejectInput(false)}>Cancel</button>
+              <div className="flex gap-2.5">
+                <button onClick={() => handleStatusChange("REJECTED")} className="ns-btn ns-btn-danger">
+                  Confirm rejection
+                </button>
+                <button onClick={() => setShowRejectInput(false)} className="ns-btn ns-btn-ghost">
+                  Cancel
+                </button>
+              </div>
             </div>
           )}
         </div>
       </div>
 
-      {/* Fullscreen Image Preview */}
       {selectedImage && (
         <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: "rgba(0,0,0,0.85)",
-            zIndex: 1100,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
+          className="fixed inset-0 flex items-center justify-center p-4"
+          style={{ background: "rgba(10, 15, 13, 0.9)", zIndex: 1100 }}
           onClick={() => setSelectedImage(null)}
         >
           <img
             src={selectedImage}
-            alt="Expanded Evidence"
-            style={{ maxWidth: "90%", maxHeight: "90%", borderRadius: "8px" }}
+            alt="Expanded evidence"
+            className="rounded-xl"
+            style={{ maxWidth: "90%", maxHeight: "90%" }}
           />
         </div>
       )}

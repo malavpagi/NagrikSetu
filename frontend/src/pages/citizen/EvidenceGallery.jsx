@@ -2,70 +2,84 @@ import { useState, useEffect } from "react";
 import api from "../../api/axios.js";
 
 function EvidenceGallery() {
-    const [evidences, setEvidences] = useState([]);
-    const [loading, setLoading] = useState(true);
+  const [evidences, setEvidences] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        api.get("/citizen/evidences")
-           .then(res => setEvidences(res.data.evidences))
-           .catch(err => console.error(err))
-           .finally(() => setLoading(false));
-    }, []);
+  useEffect(() => {
+    api
+      .get("/citizen/evidences")
+      .then((res) => setEvidences(res.data.evidences))
+      .catch((err) => console.error(err))
+      .finally(() => setLoading(false));
+  }, []);
 
-    // --- NEW: Handle Delete Function ---
-    const handleDelete = async (evidenceId) => {
-        const isConfirmed = window.confirm("Are you sure you want to delete this evidence?");
-        if (!isConfirmed) return;
+  const handleDelete = async (evidenceId) => {
+    const isConfirmed = window.confirm("Are you sure you want to delete this evidence?");
+    if (!isConfirmed) return;
 
-        try {
-            await api.delete(`/citizen/evidence/${evidenceId}`);
-            // Remove the deleted image from the screen immediately
-            setEvidences(evidences.filter(ev => ev._id !== evidenceId));
-            alert("Evidence deleted!");
-        } catch (error) {
-            console.error(error);
-            alert("Failed to delete evidence.");
-        }
-    };
+    try {
+      await api.delete(`/citizen/evidence/${evidenceId}`);
+      setEvidences(evidences.filter((ev) => ev._id !== evidenceId));
+      alert("Evidence deleted!");
+    } catch (error) {
+      console.error(error);
+      alert("Failed to delete evidence.");
+    }
+  };
 
-    if (loading) return <p className="text-center mt-10 text-gray-500">Loading evidence...</p>;
-
+  if (loading)
     return (
-        <div>
-            <h2 className="text-xl font-bold mb-4 text-gray-800">My Evidences</h2>
-            
-            {evidences.length === 0 ? (
-                <p className="text-gray-500 text-center py-8">No evidence captured yet.</p>
-            ) : (
-                <div className="grid grid-cols-2 gap-3 pb-20">
-                    {evidences.map(ev => (
-                        <div key={ev._id} className="relative rounded-xl overflow-hidden shadow-sm border border-gray-200">
-                            
-                            {/* --- NEW: Delete Button --- */}
-                            <button 
-                                onClick={() => handleDelete(ev._id)}
-                                className="absolute top-2 right-2 bg-red-500 text-white w-8 h-8 flex items-center justify-center rounded-full shadow-md hover:bg-red-600 active:bg-red-700 z-10"
-                                title="Delete Evidence"
-                            >
-                                🗑️
-                            </button>
-
-                            <img 
-                                src={`http://localhost:3000/${ev.imagePath}`} 
-                                className="w-full h-40 object-cover" 
-                                alt="Captured Evidence" 
-                            />
-                            <div className="absolute bottom-0 w-full bg-gradient-to-t from-black/70 to-transparent p-2 pt-6 pointer-events-none">
-                                <span className="text-xs text-white font-medium">
-                                    {new Date(ev.capturedAt).toLocaleDateString()}
-                                </span>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            )}
-        </div>
+      <div className="flex justify-center py-16">
+        <div className="ns-spinner" />
+      </div>
     );
+
+  return (
+    <div>
+      <h2 className="font-display font-bold text-xl mb-1" style={{ color: "var(--ink)" }}>
+        My evidences
+      </h2>
+      <p className="text-sm mb-6" style={{ color: "var(--ink-soft)" }}>
+        Photos captured with a verified location, ready to attach to a complaint.
+      </p>
+
+      {evidences.length === 0 ? (
+        <div className="ns-card text-center py-14 px-6">
+          <span className="text-3xl block mb-2">&#9723;</span>
+          <p className="font-semibold" style={{ color: "var(--ink)" }}>No evidence captured yet</p>
+          <p className="text-sm mt-1" style={{ color: "var(--ink-soft)" }}>
+            Use "Capture evidence" from the menu to add your first photo.
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 gap-3 pb-6">
+          {evidences.map((ev) => (
+            <div key={ev._id} className="ns-card relative overflow-hidden">
+              <button
+                onClick={() => handleDelete(ev._id)}
+                className="absolute top-2 right-2 w-8 h-8 flex items-center justify-center rounded-full shadow-md z-10 text-white"
+                style={{ background: "var(--brick)" }}
+                title="Delete evidence"
+              >
+                &#128465;
+              </button>
+
+              <img
+                src={`http://localhost:3000/${ev.imagePath}`}
+                className="w-full h-40 object-cover"
+                alt="Captured evidence"
+              />
+              <div className="p-2.5">
+                <span className="text-xs font-mono" style={{ color: "var(--ink-soft)" }}>
+                  {new Date(ev.capturedAt).toLocaleDateString()}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default EvidenceGallery;

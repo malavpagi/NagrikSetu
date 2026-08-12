@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { getOfficialsApi, deleteOfficialApi } from "../../api/admin.api";
 import EditOfficial from "./EditOfficial";
+import OfficialCard from "../../components/OfficialCard.jsx";
 
 function InactiveOfficials() {
   const [officials, setOfficials] = useState([]);
@@ -37,53 +38,47 @@ function InactiveOfficials() {
     }
   };
 
-  const handleEditClick = (official) => {
-    setEditingOfficial(official);
-  };
-
-  const handleCancelEdit = () => {
-    setEditingOfficial(null);
-  };
-
+  const handleEditClick = (official) => setEditingOfficial(official);
+  const handleCancelEdit = () => setEditingOfficial(null);
   const handleSaveEdit = () => {
     setEditingOfficial(null);
-    fetchInactiveOfficials(); // Refresh list to reflect updates
+    fetchInactiveOfficials();
   };
 
-  if (loading) return <div>Loading inactive officials...</div>;
-  if (error) return <div>Error: {error}</div>;
-
-  // Render Edit View when an official is selected for editing
-  if (editingOfficial) {
+  if (loading)
     return (
-      <EditOfficial
-        official={editingOfficial}
-        onSave={handleSaveEdit}
-        onCancel={handleCancelEdit}
-      />
+      <div className="flex justify-center py-16">
+        <div className="ns-spinner" />
+      </div>
     );
+  if (error) return <div className="ns-card p-5" style={{ color: "var(--brick)" }}>{error}</div>;
+
+  if (editingOfficial) {
+    return <EditOfficial official={editingOfficial} onSave={handleSaveEdit} onCancel={handleCancelEdit} />;
   }
 
-  // Render Cards List View
   return (
     <section>
-      <h2>Inactive Officials List</h2>
+      <h2 className="font-display font-bold text-xl mb-1" style={{ color: "var(--ink)" }}>
+        Inactive officials
+      </h2>
+      <p className="text-sm mb-6" style={{ color: "var(--ink-soft)" }}>
+        Accounts disabled from logging in. Edit to reactivate, or delete permanently.
+      </p>
+
       {officials.length === 0 ? (
-        <p>No inactive officials found.</p>
+        <div className="ns-card text-center py-14 px-6">
+          <p className="font-semibold" style={{ color: "var(--ink)" }}>No inactive officials found</p>
+        </div>
       ) : (
-        <div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
           {officials.map((official) => (
-            <article key={official._id} style={{ border: "1px solid #ccc", padding: "10px", marginBottom: "10px" }}>
-              <h3>Username: {official.username}</h3>
-              <p>Full Name: {official.fullName}</p>
-              <p>Mobile: {official.mobile}</p>
-              <p>Email: {official.email}</p>
-              <p>Department Code: {official.departmentCode || "N/A"}</p>
-              <div>
-                <button onClick={() => handleEditClick(official)}>Edit</button>{" "}
-                <button onClick={() => handleDelete(official._id, official.username)}>Delete</button>
-              </div>
-            </article>
+            <OfficialCard
+              key={official._id}
+              official={official}
+              onEdit={() => handleEditClick(official)}
+              onDelete={() => handleDelete(official._id, official.username)}
+            />
           ))}
         </div>
       )}

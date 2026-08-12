@@ -44,103 +44,56 @@ function EditOfficial({ official, onSave, onCancel }) {
   };
 
   return (
-    <section>
-      <h2>Edit Official</h2>
-      <form onSubmit={handleSubmit}>
+    <section className="max-w-xl">
+      <h2 className="font-display font-bold text-xl mb-1" style={{ color: "var(--ink)" }}>
+        Edit official
+      </h2>
+      <p className="text-sm mb-6" style={{ color: "var(--ink-soft)" }}>
+        Update account details or toggle access.
+      </p>
+
+      <form onSubmit={handleSubmit} className="ns-card p-5 sm:p-6 flex flex-col gap-4">
         <div>
-          <label>
-            Username:{" "}
-            <input
-              type="text"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              required
-            />
-          </label>
+          <label className="ns-field" htmlFor="edit-username">Username</label>
+          <input id="edit-username" className="ns-input" type="text" name="username" value={formData.username} onChange={handleChange} required />
         </div>
-        <br />
 
         <div>
-          <label>
-            Full Name:{" "}
-            <input
-              type="text"
-              name="fullName"
-              value={formData.fullName}
-              onChange={handleChange}
-              required
-            />
-          </label>
+          <label className="ns-field" htmlFor="edit-fullName">Full name</label>
+          <input id="edit-fullName" className="ns-input" type="text" name="fullName" value={formData.fullName} onChange={handleChange} required />
         </div>
-        <br />
+
+        <div className="grid sm:grid-cols-2 gap-4">
+          <div>
+            <label className="ns-field" htmlFor="edit-mobile">Mobile</label>
+            <input id="edit-mobile" className="ns-input" type="text" name="mobile" value={formData.mobile} onChange={handleChange} required />
+          </div>
+          <div>
+            <label className="ns-field" htmlFor="edit-email">Email</label>
+            <input id="edit-email" className="ns-input" type="email" name="email" value={formData.email} onChange={handleChange} required />
+          </div>
+        </div>
 
         <div>
-          <label>
-            Mobile:{" "}
-            <input
-              type="text"
-              name="mobile"
-              value={formData.mobile}
-              onChange={handleChange}
-              required
-            />
-          </label>
+          <label className="ns-field" htmlFor="edit-departmentCode">Department</label>
+          <select id="edit-departmentCode" className="ns-input" name="departmentCode" value={formData.departmentCode} onChange={handleChange} required>
+            <option value="">-- Select department --</option>
+            {departments.map((dept) => (
+              <option key={dept._id} value={dept.code}>
+                {dept.name} ({dept.code})
+              </option>
+            ))}
+          </select>
         </div>
-        <br />
 
-        <div>
-          <label>
-            Email:{" "}
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </label>
-        </div>
-        <br />
+        <label className="flex items-center gap-2.5 text-sm font-medium select-none" style={{ color: "var(--ink)" }}>
+          <input type="checkbox" name="isActive" checked={formData.isActive} onChange={handleChange} className="w-4 h-4" />
+          Active account
+        </label>
 
-        <div>
-          <label>
-            Department:{" "}
-            <select
-              name="departmentCode"
-              value={formData.departmentCode}
-              onChange={handleChange}
-              required
-            >
-              <option value="">-- Select Department --</option>
-              {departments.map((dept) => (
-                <option key={dept._id} value={dept.code}>
-                  {dept.name} ({dept.code})
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
-        <br />
-
-        <div>
-          <label>
-            Active Account:{" "}
-            <input
-              type="checkbox"
-              name="isActive"
-              checked={formData.isActive}
-              onChange={handleChange}
-            />
-          </label>
-        </div>
-        <br />
-
-        <div>
-          <button type="submit">Save</button>{" "}
-          <button type="button" onClick={onCancel}>
-            Cancel
-          </button>
+        <div className="flex gap-3 mt-1">
+          <button type="submit" className="ns-btn ns-btn-primary flex-1">Save changes</button>
+          <button type="button" onClick={onCancel} className="ns-btn ns-btn-ghost">Cancel</button>
         </div>
       </form>
     </section>

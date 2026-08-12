@@ -1,85 +1,84 @@
-// import {Routes, Route} from "react-router-dom";
-
-// import HomePage from "./HomePage";
-// import ProfilePage from "./ProfilePage";
-
-// function CitizenHome(){
-//     return (<>
-//         <h1>This is Citizen Dashboard</h1>
-//         <Routes>
-//             <Route index element={<HomePage />} />
-//             <Route path="profile" element={<ProfilePage />} />
-//         </Routes>
-//     </>);
-// }
-// export default CitizenHome;
-
 import { Routes, Route, Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 
-// Import the sub-pages (we will build these next)
-import CitizenMenu from "./CitizenMenu.jsx"; // The page with the 4 buttons
+import CitizenMenu from "./CitizenMenu.jsx";
 import CaptureEvidence from "./CaptureEvidence.jsx";
 import MakeComplaint from "./MakeComplaint.jsx";
 import MyComplaints from "./MyComplaints.jsx";
 import EvidenceGallery from "./EvidenceGallery.jsx";
+import BrandMark from "../../components/BrandMark.jsx";
+
+const NAV_ITEMS = [
+  { to: "/citizen", label: "Home", icon: "\u2302" },
+  { to: "/citizen/capture", label: "Capture", icon: "\u25CE" },
+  { to: "/citizen/my-complaints", label: "Status", icon: "\u2261" },
+];
 
 function CitizenHome() {
-    const { logout, user } = useAuth();
-    const navigate = useNavigate();
-    const location = useLocation();
+  const { logout, user } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-    const handleLogout = () => {
-        logout();
-        navigate("/login");
-    };
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
-    // Helper to highlight active bottom nav link
-    const isActive = (path) => location.pathname === path ? 'text-blue-600 font-bold' : 'text-gray-500';
+  const isActive = (path) => location.pathname === path;
 
-    return (
-        <div className="flex flex-col min-h-screen bg-gray-50">
-            {/* --- TOP HEADER --- */}
-            <header className="bg-blue-600 text-white p-4 shadow-md flex justify-between items-center">
-                <div>
-                    <h1 className="text-xl font-bold">Citizen Portal</h1>
-                    <p className="text-blue-100 text-sm">Hello, {user?.fullName || user?.username}</p>
-                </div>
-                <button onClick={handleLogout} className="text-sm bg-blue-700 px-3 py-1 rounded hover:bg-blue-800">
-                    Logout
-                </button>
-            </header>
-
-            {/* --- MAIN CONTENT AREA (Nested Routes) --- */}
-            {/* pb-20 ensures content isn't hidden behind the bottom nav */}
-            <main className="flex-grow pb-20 p-4">
-                <Routes>
-                    {/* Default route shows the 4 buttons menu */}
-                    <Route index element={<CitizenMenu />} />
-                    <Route path="capture" element={<CaptureEvidence />} />
-                    <Route path="make-complaint" element={<MakeComplaint />} />
-                    <Route path="evidences" element={<EvidenceGallery />} />
-                    <Route path="my-complaints" element={<MyComplaints />} />
-                </Routes>
-            </main>
-
-            {/* --- MOBILE BOTTOM NAVIGATION --- */}
-            <nav className="fixed bottom-0 w-full bg-white border-t border-gray-200 shadow-[0_-2px_10px_rgba(0,0,0,0.05)] flex justify-around items-center p-3 z-50">
-                <Link to="/citizen" className={`flex flex-col items-center text-sm ${isActive('/citizen')}`}>
-                    <span className="text-xl">🏠</span>
-                    <span>Home</span>
-                </Link>
-                <Link to="/citizen/capture" className={`flex flex-col items-center text-sm ${isActive('/citizen/capture')}`}>
-                    <span className="text-xl text-blue-500">📸</span>
-                    <span>Capture</span>
-                </Link>
-                <Link to="/citizen/my-complaints" className={`flex flex-col items-center text-sm ${isActive('/citizen/my-complaints')}`}>
-                    <span className="text-xl">📋</span>
-                    <span>Status</span>
-                </Link>
-            </nav>
+  return (
+    <div className="min-h-screen flex flex-col font-body" style={{ background: "var(--paper)" }}>
+      {/* Top header */}
+      <header
+        className="px-5 py-4 flex justify-between items-center sticky top-0 z-40"
+        style={{ background: "var(--teal)", color: "#fdfdfb" }}
+      >
+        <div className="flex items-center gap-2.5">
+          <span className="w-8 h-8 rounded-lg flex items-center justify-center bg-white/10">
+            <BrandMark size={17} />
+          </span>
+          <div>
+            <p className="font-display font-bold text-[0.95rem] leading-tight">Nagrik-Setu</p>
+            <p className="text-[0.72rem] opacity-75 leading-tight">
+              Hi, {user?.fullName || user?.username}
+            </p>
+          </div>
         </div>
-    );
+        <button onClick={handleLogout} className="ns-btn text-xs px-3 py-1.5" style={{ background: "rgba(255,255,255,0.14)", color: "#fdfdfb" }}>
+          Logout
+        </button>
+      </header>
+
+      {/* Routed content */}
+      <main className="flex-grow pb-24 px-4 sm:px-8 pt-5 max-w-3xl w-full mx-auto">
+        <Routes>
+          <Route index element={<CitizenMenu />} />
+          <Route path="capture" element={<CaptureEvidence />} />
+          <Route path="make-complaint" element={<MakeComplaint />} />
+          <Route path="evidences" element={<EvidenceGallery />} />
+          <Route path="my-complaints" element={<MyComplaints />} />
+        </Routes>
+      </main>
+
+      {/* Bottom nav */}
+      <nav
+        className="fixed bottom-0 w-full flex justify-around items-center py-2.5 z-50"
+        style={{ background: "var(--paper-card)", borderTop: "1px solid var(--border)" }}
+      >
+        {NAV_ITEMS.map((item) => (
+          <Link
+            key={item.to}
+            to={item.to}
+            className="flex flex-col items-center text-[0.72rem] font-medium gap-0.5 px-4 py-1 rounded-lg transition-colors"
+            style={{ color: isActive(item.to) ? "var(--teal)" : "var(--ink-faint)" }}
+          >
+            <span className="text-lg leading-none">{item.icon}</span>
+            {item.label}
+          </Link>
+        ))}
+      </nav>
+    </div>
+  );
 }
 
 export default CitizenHome;
